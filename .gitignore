@@ -1,0 +1,48 @@
+# Java
+*.class
+*.jar
+*.war
+*.ear
+target/
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*.swo
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Mobile
+erp-frontend/apps/mobile/.expo/
+erp-frontend/apps/mobile/dist/
+
+# Tauri
+erp-frontend/apps/desktop/src-tauri/target/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Build
+build/
+out/
+.claude/

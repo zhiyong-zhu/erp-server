@@ -1,0 +1,33 @@
+{
+  "name": "erp-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "全渠道ERP系统 - 前端 Monorepo",
+  "scripts": {
+    "dev:web": "pnpm --filter @erp/web dev",
+    "dev:desktop": "pnpm --filter @erp/desktop dev",
+    "dev:mobile": "pnpm --filter @erp/mobile dev",
+    "build:web": "pnpm --filter @erp/web build",
+    "build:desktop": "pnpm --filter @erp/desktop build",
+    "build:mobile": "pnpm --filter @erp/mobile build",
+    "tauri:dev": "pnpm --filter @erp/desktop tauri:dev",
+    "tauri:build": "pnpm --filter @erp/desktop tauri:build",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "pnpm -r typecheck",
+    "clean": "pnpm -r exec rm -rf node_modules dist"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

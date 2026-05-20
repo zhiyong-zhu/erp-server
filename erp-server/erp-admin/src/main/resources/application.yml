@@ -1,0 +1,116 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: erp-server
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/erp_db
+    username: erp_user
+    password: erp_password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      connection-timeout: 20000
+
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 0
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  # Flyway
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: "0"
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+# MyBatis-Plus
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: assign_uuid
+      logic-delete-field: deleted
+      logic-delete-value: true
+      logic-not-delete-value: false
+  mapper-locations: classpath*:/mapper/**/*.xml
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:erp-system-secret-key-change-in-production}
+  access-token-expiration: 7200000  # 2 hours
+  refresh-token-expiration: 604800000  # 7 days
+
+# SpringDoc OpenAPI
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  group-configs:
+    - group: system
+      display-name: 系统管理
+      paths-to-match: /api/v1/system/**
+    - group: product
+      display-name: 产品管理
+      paths-to-match: /api/v1/product/**
+    - group: inventory
+      display-name: 库存管理
+      paths-to-match: /api/v1/inventory/**
+    - group: sales
+      display-name: 销售管理
+      paths-to-match: /api/v1/sales/**
+    - group: purchase
+      display-name: 采购管理
+      paths-to-match: /api/v1/purchase/**
+    - group: production
+      display-name: 生产管理
+      paths-to-match: /api/v1/production/**
+    - group: finance
+      display-name: 财务管理
+      paths-to-match: /api/v1/finance/**
+    - group: hr
+      display-name: 人力资源
+      paths-to-match: /api/v1/hr/**
+    - group: integration
+      display-name: 集成管理
+      paths-to-match: /api/v1/integration/**
+
+# Flowable
+flowable:
+  database-schema-update: true
+  history-level: full
+  async-executor-activate: true
+  process-definition-location-prefix: classpath*:/processes/
+
+# Logging
+logging:
+  level:
+    com.erp: INFO
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
