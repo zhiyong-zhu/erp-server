@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Form, Input, Button, Card, message, Row, Col } from 'antd';
+import { Form, Input, Button, Card, Row, Col, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { apiClient, useAuthStore } from '@erp/shared';
+import { authApi, useAuthStore } from '@erp/shared';
 
 interface LoginForm {
   username: string;
@@ -12,40 +12,25 @@ interface LoginForm {
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setUser, setTokens } = useAuthStore();
+  const { setUser, setTokens, setPermissions } = useAuthStore();
 
   const handleLogin = async (values: LoginForm) => {
     setLoading(true);
     try {
-      // Mock login for development
-      if (values.username === 'admin' && values.password === '123456') {
-        const mockUser = {
-          id: '1',
-          username: 'admin',
-          nickname: '管理员',
-          status: 1,
-          createdAt: new Date().toISOString(),
-        };
-        setUser(mockUser);
-        setTokens('mock_access_token', 'mock_refresh_token');
-        message.success('登录成功');
-        navigate('/');
-        return;
+      const tokenData = await authApi.login(values);
+      setTokens(tokenData.accessToken, tokenData.refreshToken);
+
+      const userInfo = await authApi.getUserInfo();
+      setUser(userInfo);
+      if (userInfo.permissions) {
+        setPermissions(userInfo.permissions);
       }
 
-      // Real API call
-      const response = await apiClient.post<{
-        user: any;
-        accessToken: string;
-        refreshToken: string;
-      }>('/system/auth/login', values);
-
-      setUser(response.user);
-      setTokens(response.accessToken, response.refreshToken);
       message.success('登录成功');
       navigate('/');
-    } catch (error: any) {
-      message.error(error.message || '登录失败');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : '登录失败';
+      message.error(msg);
     } finally {
       setLoading(false);
     }
@@ -73,6 +58,7 @@ const Login = () => {
             onFinish={handleLogin}
             autoComplete="off"
             size="large"
+            initialValues={{ username: 'admin', password: '123456' }}
           >
             <Form.Item
               name="username"
@@ -80,7 +66,7 @@ const Login = () => {
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="用户名 (admin)"
+                placeholder="用户名"
               />
             </Form.Item>
 
@@ -90,7 +76,7 @@ const Login = () => {
             >
               <Input.Password
                 prefix={<LockOutlined />}
-                placeholder="密码 (123456)"
+                placeholder="密码"
               />
             </Form.Item>
 

@@ -1,12 +1,81 @@
 export interface User {
   id: string;
   username: string;
-  nickname?: string;
+  realName?: string;
   avatar?: string;
   email?: string;
   phone?: string;
+  departmentId?: string;
+  departmentName?: string;
   status: number;
+  roles?: string[];
+  permissions?: string[];
+  lastLoginAt?: string;
   createdAt: string;
+}
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  tokenType: string;
+}
+
+export interface PageResult<T> {
+  list: T[];
+  total: number;
+  pageNum: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface UserCreateRequest {
+  username: string;
+  password: string;
+  realName?: string;
+  phone?: string;
+  email?: string;
+  departmentId?: string;
+  roleIds?: string[];
+}
+
+export interface UserUpdateRequest {
+  realName?: string;
+  phone?: string;
+  email?: string;
+  avatar?: string;
+  departmentId?: string;
+  status?: number;
+  roleIds?: string[];
+}
+
+export interface UserQueryRequest {
+  username?: string;
+  realName?: string;
+  phone?: string;
+  status?: number;
+  departmentId?: string;
+}
+
+export interface UserResponse {
+  id: string;
+  username: string;
+  realName?: string;
+  avatar?: string;
+  email?: string;
+  phone?: string;
+  departmentId?: string;
+  departmentName?: string;
+  status: number;
+  roleIds?: string[];
+  roleNames?: string[];
+  lastLoginAt?: string;
+  createdAt?: string;
 }
 
 export interface Product {

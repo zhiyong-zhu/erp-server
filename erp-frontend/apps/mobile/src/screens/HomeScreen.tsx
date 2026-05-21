@@ -1,6 +1,6 @@
 import { ScrollView } from 'react-native';
 import { YStack, XStack, Card, Text, H3, Button } from 'tamagui';
-import { useAuthStore } from '@erp/shared';
+import { useAuthStore } from '../store/authStore';
 
 export default function HomeScreen() {
   const { user } = useAuthStore();
@@ -17,7 +17,7 @@ export default function HomeScreen() {
       <YStack space="$3" p="$3">
         <Card elevate bordered p="$4">
           <Text fontSize="$5" fontWeight="bold">
-            欢迎回来，{user?.nickname || user?.username || '用户'}
+            欢迎回来，{user?.realName || user?.username || '用户'}
           </Text>
           <Text fontSize="$3" color="$gray10" mt="$1">
             {new Date().toLocaleDateString('zh-CN', {

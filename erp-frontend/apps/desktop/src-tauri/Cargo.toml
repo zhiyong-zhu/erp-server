@@ -11,13 +11,12 @@ edition = "2021"
 tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-tauri = { version = "1.6", features = ["shell-open", "api"] }
+tauri = { version = "1.6", features = [ "window-minimize", "window-close", "window-show", "window-hide", "window-maximize", "http-request", "window-unmaximize", "window-unminimize", "window-start-dragging", "shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.0", features = ["full"] }
 image = "0.25"
 printpdf = "0.7"
-tauri-plugin-updater = "1"
 
 [features]
 default = ["custom-protocol"]

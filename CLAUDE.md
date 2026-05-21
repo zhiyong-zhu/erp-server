@@ -4,11 +4,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Purpose
 
-This is a **documentation-only** repository for a full-channel ERP (Enterprise Resource Planning) system targeting Chinese manufacturing/trade businesses. It contains three design documents (all in Chinese) that together define the complete system specification:
+This is a **design and infrastructure** repository for a full-channel ERP system targeting Chinese manufacturing/trade businesses. It currently contains no application code — only specification documents and Docker infrastructure config for local development. Planned application code (`erp-server/`, `erp-frontend/`) has not been created yet.
 
+The three design documents (all in Chinese) define the complete system specification:
 - `prd.md` — Product Requirements Document: business modules, user stories, acceptance criteria, business rules, state machines
 - `tech-architecture.md` — Technical Architecture: system architecture, tech stack, deployment, security, observability
-- `dev-design.md` — Development Design: database DDL, API endpoints, implementation plans, coding conventions, milestone schedule
+- `dev-design.md` — Development Design (largest doc, ~4100 lines): database DDL, API endpoints, implementation plans, coding conventions, milestone schedule
+
+When implementing a feature, check docs in this order: `prd.md` (what/why) → `dev-design.md` (DDL + API + plan) → `tech-architecture.md` (cross-cutting concerns like auth, caching, deployment).
+
+## Development Commands
+
+### Infrastructure (Docker)
+
+```bash
+cp .env.example .env
+docker-compose up -d          # Start all services
+docker-compose down           # Stop all services
+docker-compose logs -f <svc>  # Follow logs for a service
+```
+
+Services and ports:
+| Service | Port | Notes |
+|---------|------|-------|
+| PostgreSQL 15 | 5432 | DB: `erp_db`, User: `erp_user` |
+| Redis 7 | 6379 | No password by default |
+| RabbitMQ 3.12 | 5672 / 15672 | Management UI at :15672 (guest/guest) |
+| RustFS (MinIO-compatible) | 9000 / 9001 | Console at :9001 |
+| Prometheus | 9090 | Requires `monitoring/prometheus.yml` |
+| Grafana | 3000 | Admin password from `GRAFANA_ADMIN_PASSWORD` env |
+
+### Backend (not yet created — planned)
+
+```bash
+cd erp-server && mvn clean install -DskipTests    # Build all modules
+cd erp-server/erp-admin && mvn spring-boot:run     # Run application
+cd erp-server && mvn test -pl erp-system            # Run single module tests
+```
+
+### Frontend (not yet created — planned)
+
+```bash
+cd erp-frontend && pnpm install          # Install dependencies
+cd erp-frontend && pnpm dev:web          # Run web app (port 3000)
+cd erp-frontend && pnpm lint             # Lint all packages
+```
 
 ## System Overview
 
@@ -27,13 +67,12 @@ The ERP covers the full business chain: Product → Material → Process → Pro
 | DB migrations | Flyway |
 | Deployment | Docker Compose |
 
-## Backend Module Structure
+## Backend Module Structure (Planned)
 
 Maven multi-module by business domain:
 - `erp-common` (core, security, mybatis, redis)
 - `erp-system` (users, roles, permissions, dictionaries)
-- `erp-product` (products, categories, BOM, packaging, labels)
-- `erp-material` (raw materials, suppliers)
+- `erp-product` (products, categories, BOM, packaging, labels, raw materials)
 - `erp-inventory` (inbound, outbound, stocktaking, transfers)
 - `erp-sales` (customers, orders, returns)
 - `erp-purchase` (purchase orders, receipts, payables)
@@ -53,7 +92,7 @@ Maven multi-module by business domain:
 - **Partitioned tables**: `inventory_transaction` and `sys_operation_log` partitioned by month on `created_at`
 - **Inventory locking**: pessimistic lock (`SELECT FOR UPDATE`) to prevent overselling
 - **E-commerce integration**: unified `EcommercePlatformService` interface with per-platform implementations; order sync via RabbitMQ
-- **Desktop printing**: Tauri Rust commands call native print APIs (Win32 GDI / CUPS); Web端 generates PDF via OpenPDF
+- **Desktop printing**: Tauri Rust commands call native print APIs (Win32 GDI / CUPS); Web generates PDF via OpenPDF
 
 ## Database Conventions
 
@@ -63,6 +102,7 @@ Maven multi-module by business domain:
 - Index naming: `idx_{table}_{column}`, FK naming: `fk_{table}_{ref_table}`
 - Dynamic specs stored as JSONB (product specifications, label template configs, platform raw data)
 - Generated columns for computed values (e.g., `available_quantity = quantity - locked_quantity`)
+- Full DDL in `dev-design.md` section 2.2
 
 ## Development Plan (20 weeks, 5 milestones)
 

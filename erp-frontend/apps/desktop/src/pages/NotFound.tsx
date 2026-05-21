@@ -1,1 +1,1 @@
-export { default } from '../../web/src/pages/NotFound';
+export { default } from '../../../web/src/pages/NotFound';

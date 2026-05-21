@@ -6,8 +6,9 @@ import {
   AppstoreOutlined,
   InboxOutlined,
   ShoppingCartOutlined,
-  LogoutOutlined,
+  SettingOutlined,
   UserOutlined,
+  LogoutOutlined,
   DownOutlined,
 } from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -27,6 +28,14 @@ const MainLayout = () => {
     { key: '/inventory', icon: <InboxOutlined />, label: '库存管理' },
     { key: '/sales', icon: <ShoppingOutlined />, label: '销售管理' },
     { key: '/purchase', icon: <ShoppingCartOutlined />, label: '采购管理' },
+    {
+      key: 'system',
+      icon: <SettingOutlined />,
+      label: '系统管理',
+      children: [
+        { key: '/system/users', icon: <UserOutlined />, label: '用户管理' },
+      ],
+    },
   ];
 
   const handleMenuClick = ({ key }: { key: string }) => {
@@ -52,7 +61,10 @@ const MainLayout = () => {
     },
   ];
 
-  const selectedKey = location.pathname;
+  const selectedKey = location.pathname.startsWith('/system')
+    ? location.pathname
+    : location.pathname;
+  const openKeys = location.pathname.startsWith('/system') ? ['system'] : [];
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -79,6 +91,7 @@ const MainLayout = () => {
         <Menu
           mode="inline"
           selectedKeys={[selectedKey]}
+          defaultOpenKeys={openKeys}
           items={menuItems}
           onClick={handleMenuClick}
           style={{ borderRight: 0 }}
@@ -106,7 +119,7 @@ const MainLayout = () => {
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
             <Space style={{ cursor: 'pointer' }}>
               <Avatar icon={<UserOutlined />} />
-              <span>{user?.nickname || user?.username || '用户'}</span>
+              <span>{user?.realName || user?.username || '用户'}</span>
               <DownOutlined />
             </Space>
           </Dropdown>

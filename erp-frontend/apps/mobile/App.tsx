@@ -5,7 +5,7 @@ import config from '@tamagui/config';
 
 import LoginScreen from './src/screens/LoginScreen';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
-import { useAuthStore } from '@erp/shared';
+import { useAuthStore } from './src/store/authStore';
 
 const Stack = createStackNavigator();
 

@@ -37,5 +37,11 @@
             <artifactId>erp-common-redis</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- SpringDoc OpenAPI Annotations -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
     </dependencies>
 </project>

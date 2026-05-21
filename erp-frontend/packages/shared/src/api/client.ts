@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import { getTokenStorage } from '../storage';
 
 export interface ApiResponse<T = unknown> {
   code: number;
@@ -7,7 +8,11 @@ export interface ApiResponse<T = unknown> {
   timestamp: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
+// Vite injects import.meta.env at build time; in other environments this is tree-shaken away
+// @ts-ignore
+const API_BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL)
+  ? import.meta.env.VITE_API_URL
+  : '/api/v1';
 
 class ApiClient {
   private instance: AxiosInstance;
@@ -25,10 +30,9 @@ class ApiClient {
   }
 
   private setupInterceptors() {
-    // Request interceptor
     this.instance.interceptors.request.use(
-      (config) => {
-        const token = localStorage.getItem('access_token');
+      async (config) => {
+        const token = await getTokenStorage().getItem('access_token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -37,7 +41,6 @@ class ApiClient {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor
     this.instance.interceptors.response.use(
       (response: AxiosResponse<ApiResponse>) => {
         const { data } = response;
@@ -46,10 +49,12 @@ class ApiClient {
         }
         return response;
       },
-      (error: AxiosError) => {
+      async (error: AxiosError) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem('access_token');
-          window.location.href = '/login';
+          await getTokenStorage().removeItem('access_token');
+          if (typeof window !== 'undefined' && window.location) {
+            window.location.href = '/login';
+          }
         }
         const message = (error.response?.data as ApiResponse)?.message || error.message || '请求失败';
         return Promise.reject(new Error(message));

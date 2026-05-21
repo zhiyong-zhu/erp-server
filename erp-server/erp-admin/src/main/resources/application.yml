@@ -6,7 +6,7 @@ spring:
     name: erp-server
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/erp_db
+    url: jdbc:postgresql://localhost:5432/erp_db?stringtype=unspecified
     username: erp_user
     password: erp_password
     driver-class-name: org.postgresql.Driver
@@ -47,6 +47,7 @@ spring:
 
 # MyBatis-Plus
 mybatis-plus:
+  type-handlers-package: com.erp.common.mybatis.handler
   configuration:
     map-underscore-to-camel-case: true
   global-config:
@@ -72,6 +73,9 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
   group-configs:
+    - group: auth
+      display-name: 认证管理
+      paths-to-match: /api/v1/auth/**
     - group: system
       display-name: 系统管理
       paths-to-match: /api/v1/system/**

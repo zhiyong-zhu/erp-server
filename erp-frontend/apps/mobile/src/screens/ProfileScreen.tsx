@@ -1,6 +1,7 @@
-import { ScrollView } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 import { YStack, Card, Text, Button, Avatar, Separator, ListItem } from 'tamagui';
-import { useAuthStore } from '@erp/shared';
+import { useAuthStore } from '../store/authStore';
+import { mobileAuthApi } from '../api/auth';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuthStore();
@@ -12,6 +13,26 @@ export default function ProfileScreen() {
     { icon: '❓', label: '帮助中心', onPress: () => {} },
   ];
 
+  const handleLogout = async () => {
+    Alert.alert('退出登录', '确定要退出登录吗？', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '确定',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            if (user) {
+              await mobileAuthApi.logout();
+            }
+          } catch {
+            // ignore logout API errors
+          }
+          logout();
+        },
+      },
+    ]);
+  };
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
       <YStack space="$3" p="$3">
@@ -19,14 +40,14 @@ export default function ProfileScreen() {
           <YStack ai="center" space="$2">
             <Avatar circular size="$6" bg="$blue10">
               <Text fontSize="$6" color="white">
-                {(user?.nickname || user?.username || '?')[0].toUpperCase()}
+                {(user?.realName || user?.username || '?')[0].toUpperCase()}
               </Text>
             </Avatar>
             <Text fontSize="$5" fontWeight="bold">
-              {user?.nickname || user?.username || '用户'}
+              {user?.realName || user?.username || '用户'}
             </Text>
             <Text fontSize="$3" color="$gray10">
-              {user?.email || 'admin@erp.com'}
+              {user?.email || '未设置邮箱'}
             </Text>
           </YStack>
         </Card>
@@ -48,7 +69,7 @@ export default function ProfileScreen() {
           </YStack>
         </Card>
 
-        <Button theme="red" onPress={logout}>
+        <Button theme="red" onPress={handleLogout}>
           退出登录
         </Button>
 

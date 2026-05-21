@@ -138,7 +138,7 @@ const MainLayout = () => {
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
               <Space style={{ cursor: 'pointer' }}>
                 <Avatar icon={<UserOutlined />} />
-                <span>{user?.nickname || user?.username || '用户'}</span>
+                <span>{user?.realName || user?.username || '用户'}</span>
                 <DownOutlined />
               </Space>
             </Dropdown>

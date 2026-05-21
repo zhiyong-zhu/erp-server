@@ -12,6 +12,7 @@ const Inventory = lazy(() => import('./pages/Inventory'));
 const Sales = lazy(() => import('./pages/Sales'));
 const Purchase = lazy(() => import('./pages/Purchase'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const SystemUsers = lazy(() => import('./pages/system/Users'));
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -39,6 +40,7 @@ function App() {
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/purchase" element={<Purchase />} />
+            <Route path="/system/users" element={<SystemUsers />} />
           </Route>
 
           {/* 404 */}

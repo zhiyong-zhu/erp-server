@@ -1,41 +1,34 @@
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { YStack, XStack, Input, Button, Text, Card, H2, Separator } from 'tamagui';
-import { useAuthStore, apiClient } from '@erp/shared';
+import { mobileAuthApi } from '../api/auth';
+import { useAuthStore } from '../store/authStore';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('123456');
   const [loading, setLoading] = useState(false);
-  const { setUser, setTokens } = useAuthStore();
+  const { setUser, setTokens, setPermissions } = useAuthStore();
 
   const handleLogin = async () => {
+    if (!username || !password) {
+      Alert.alert('提示', '请输入用户名和密码');
+      return;
+    }
+
     setLoading(true);
     try {
-      // Mock login for development
-      if (username === 'admin' && password === '123456') {
-        const mockUser = {
-          id: '1',
-          username: 'admin',
-          nickname: '管理员',
-          status: 1,
-          createdAt: new Date().toISOString(),
-        };
-        setUser(mockUser);
-        setTokens('mock_access_token', 'mock_refresh_token');
-        return;
+      const tokenData = await mobileAuthApi.login({ username, password });
+      setTokens(tokenData.accessToken, tokenData.refreshToken);
+
+      const userInfo = await mobileAuthApi.getUserInfo();
+      setUser(userInfo);
+      if (userInfo.permissions) {
+        setPermissions(userInfo.permissions);
       }
-
-      const response = await apiClient.post<{
-        user: any;
-        accessToken: string;
-        refreshToken: string;
-      }>('/system/auth/login', { username, password });
-
-      setUser(response.user);
-      setTokens(response.accessToken, response.refreshToken);
-    } catch (error: any) {
-      alert(error.message || '登录失败');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : '登录失败';
+      Alert.alert('登录失败', msg);
     } finally {
       setLoading(false);
     }
