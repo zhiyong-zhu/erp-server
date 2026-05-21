@@ -2,9 +2,7 @@ package com.erp.common.core.page;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.Data;
 
-@Data
 public class PageQuery {
 
     @Min(value = 1, message = "页码不能小于1")
@@ -17,4 +15,36 @@ public class PageQuery {
     private String orderBy;
 
     private Boolean asc = true;
+
+    public Integer getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(Integer pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
+
+    public Boolean getAsc() {
+        return asc;
+    }
+
+    public void setAsc(Boolean asc) {
+        this.asc = asc;
+    }
 }

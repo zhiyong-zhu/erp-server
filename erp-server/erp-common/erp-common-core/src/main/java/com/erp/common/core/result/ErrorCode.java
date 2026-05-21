@@ -1,8 +1,5 @@
 package com.erp.common.core.result;
 
-import lombok.Getter;
-
-@Getter
 public enum ErrorCode {
 
     // System Level: 10000-19999
@@ -49,5 +46,13 @@ public enum ErrorCode {
     ErrorCode(Integer code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }
